@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">shakeWait</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_task_loop">taskLoop</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
