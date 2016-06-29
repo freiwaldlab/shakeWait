@@ -12,11 +12,15 @@
         android:id="@+id/goalImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_centerInParent="true"/>
     <ImageView
         android:id="@+id/progressImage"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_centerInParent="true"/>
     <TextView
         android:id="@+id/debugText"
@@ -24,4 +28,19 @@
         android:layout_height="wrap_content"
         android:text="waiting"
         android:layout_centerInParent="true"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+        <ImageView
+            android:id="@+id/whiteSquareView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/blackRectView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true" />
+
+    </LinearLayout>
 </RelativeLayout>

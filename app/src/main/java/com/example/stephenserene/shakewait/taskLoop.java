@@ -3,6 +3,9 @@ package com.example.stephenserene.shakewait;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,15 +18,21 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.hardware.SensorManager;
 import android.widget.TextView;
+import android.graphics.Bitmap;
 
 import java.util.EventListener;
 
+//
+import android.graphics.PorterDuff.Mode;
 
 public class taskLoop extends Activity implements SensorEventListener {
 
@@ -46,9 +55,18 @@ public class taskLoop extends Activity implements SensorEventListener {
     private RelativeLayout layout;
     private ImageView progressImage;
     private ImageView goalImage;
+    // BLACK RECTANGLE
+    private ImageView blackRectView;
+    private ImageView whiteSquareView;
+    private LinearLayout.LayoutParams blackRectSize;
+    private LinearLayout.LayoutParams whiteSquareSize;
+
     private RelativeLayout.LayoutParams progressSize;
-    private int progressSquare = R.drawable.progress;
-    private int goalSquare = R.drawable.goal;
+    private int progressSquare = R.drawable.progress1;
+    private int goalSquare = R.drawable.goal1;
+    private int blackRect = R.drawable.blackrect;
+    private int whiteSquare = R.drawable.whitesquare;
+
     // audio port analog output variables
     private final int sampleRate = 20000;
     private final int numSamples = 2100;
@@ -89,8 +107,22 @@ public class taskLoop extends Activity implements SensorEventListener {
         progressImage.setImageResource(progressSquare);
         goalImage = (ImageView) findViewById(R.id.goalImage);
         goalImage.setImageResource(goalSquare);
+
+        //BLACK RECTANGLE
+        blackRectView = (ImageView) findViewById(R.id.blackRectView);
+        blackRectView.setImageResource(blackRect);
+        blackRectSize = new LinearLayout.LayoutParams(R.dimen.activity_horizontal_margin, 40);
+        blackRectView.setLayoutParams(blackRectSize);
+
+        //WHITE SQUARE
+        whiteSquareView = (ImageView) findViewById(R.id.whiteSquareView);
+        whiteSquareView.setImageResource(whiteSquare);
+        whiteSquareSize = new LinearLayout.LayoutParams(40, 40);
+        whiteSquareView.setLayoutParams(whiteSquareSize);
+
         progressSize = new RelativeLayout.LayoutParams(30, 30);
         progressImage.setLayoutParams(progressSize);
+
         stillFor = 0;
         stillSince = SystemClock.elapsedRealtime();
 
@@ -118,7 +150,8 @@ public class taskLoop extends Activity implements SensorEventListener {
                 AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
                 AudioTrack.MODE_STREAM);
         //audioPulse.write(generatedSnd, 0, generatedSnd.length);
-        audioPulse.play();
+        // DEBUG BEEP
+        //audioPulse.play();
 
         //audioPulse.setVolume(audioPulse.getMaxVolume());
     }
@@ -141,13 +174,16 @@ public class taskLoop extends Activity implements SensorEventListener {
         if ((SystemClock.elapsedRealtime() - lastPoll) > pollEvery) {
             synchronized (this) {
                 if (giveReward) {
+                    whiteSquareView = (ImageView) findViewById(R.id.whiteSquareView);
+                    whiteSquareView.setImageResource(whiteSquare);
+                    whiteSquareView.setColorFilter(Color.BLACK);
                     giveReward = false;
                 } else {
                     return;
                 }
             }
-            int goalWidth = goalImage.getWidth();
-            int goalHeight = goalImage.getHeight();
+            int goalWidth = goalImage.getWidth() - 20;
+            int goalHeight = goalImage.getHeight() - 20;
             lastPoll = SystemClock.elapsedRealtime();
 
             //debugText.setText(Double.toString(totalAccel / accelReadings));
@@ -167,6 +203,10 @@ public class taskLoop extends Activity implements SensorEventListener {
             int newHeight = Math.round(goalHeight * waitFraction);
             progressSize = new RelativeLayout.LayoutParams(newWidth, newHeight);
             progressSize.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+            //set margins
+            progressSize.setMargins(20, 0, 20, 0);
+
             progressImage.setLayoutParams(progressSize);
             if (stillFor > waitFor) {
                 // give reward,
@@ -176,7 +216,7 @@ public class taskLoop extends Activity implements SensorEventListener {
 //                        sampleRate, AudioFormat.CHANNEL_OUT_MONO,
 //                        AudioFormat.ENCODING_PCM_16BIT, generatedSnd.length,
 //                        AudioTrack.MODE_STATIC);
-                audioPulse.write(generatedSnd, 0, generatedSnd.length);
+                //audioPulse.write(generatedSnd, 0, generatedSnd.length);
                 //audioPulse.play();
 //                boolean done = false;
 //                while (!done) {
@@ -187,6 +227,10 @@ public class taskLoop extends Activity implements SensorEventListener {
 //                    } catch (IllegalStateException e) {
 //                    }
 //                }
+                whiteSquareView = (ImageView) findViewById(R.id.whiteSquareView);
+                whiteSquareView.setImageResource(whiteSquare);
+                whiteSquareView.setColorFilter(Color.WHITE);
+
             }
             synchronized (this) {
                 giveReward = true;
@@ -205,4 +249,5 @@ public class taskLoop extends Activity implements SensorEventListener {
         super.onPause();
         mSensorManager.unregisterListener(this);
     }
+
 }
